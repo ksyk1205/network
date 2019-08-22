@@ -45,7 +45,7 @@ public class EchoServer {
 					}
 
 					String data =new String(buffer, 0,readByteCount,"UTF-8");
-					System.out.println(">>" +data);
+					System.out.println("[TCPServer] received:" +data);
 					os.write(data.getBytes("UTF-8"));
 				}
 

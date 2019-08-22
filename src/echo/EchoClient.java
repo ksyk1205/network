@@ -13,38 +13,43 @@ public class EchoClient {
 
 	public static void main(String[] args) {
 		Socket socket = null;
-		
+
 		try {
 
 			socket =new Socket();
-			
+
 			InetSocketAddress inetsocketAddress =new InetSocketAddress(SERVER_IP,PORT);
 
 			socket.connect(inetsocketAddress);
-			
+
 			System.out.println("[TCPClient] connected");
-			
+
 
 			InputStream is=socket.getInputStream();
 			OutputStream os =socket.getOutputStream();
-			
-			Scanner scanner = new Scanner(System.in);
+			while(true) {
+				Scanner scanner = new Scanner(System.in);
+				System.out.print(">>");
+				String data = scanner.nextLine();
+				
+				if(data.equals("exit")) {
+					break;
+				}
+				
+				os.write(data.getBytes("UTF-8"));
 
-			String data = scanner.nextLine();
-			os.write(data.getBytes("UTF-8"));
-			
 
-			byte [] buffer = new byte[256];
-			int readByteCount =is.read(buffer);
-			if(readByteCount == -1) {
-				System.out.println("[TCPServer] closed by client");
-				return;
+				byte [] buffer = new byte[256];
+				int readByteCount =is.read(buffer);
+				if(readByteCount == -1) {
+					System.out.println("[TCPServer] closed by client");
+					return;
+				}
+				data = new String(buffer,0, readByteCount,"UTF-8");
+				System.out.println("<<"+data);
+
 			}
 
-			data = new String(buffer,0, readByteCount,"UTF-8");
-			System.out.println("[TCPClient] received:"+data);
-		
-			
 		} catch (IOException e) {
 			e.printStackTrace();
 		}finally {

@@ -28,8 +28,11 @@ public class TCPServer {
 			
 			//3. accept: 클라이언트로 부터 연결요청(Connect)을 기다린다.
 			Socket socket =serverSocket.accept();//Blocking
+			
 			InetSocketAddress inetRemoteSocketAddress =(InetSocketAddress) socket.getRemoteSocketAddress();
+			
 			String remoteHostAddress =inetRemoteSocketAddress.getAddress().getHostAddress();
+			
 			int remoteHostPort =inetRemoteSocketAddress.getPort();
 			System.out.println("[TCPServer] connected from client["+remoteHostAddress+":"+remoteHostPort+"]");
 
@@ -50,11 +53,11 @@ public class TCPServer {
 						break;
 					}
 
-					String data =new String(buffer, 0,readByteCount,"UTF-8");
+					String data =new String(buffer, 0,readByteCount,"UTF-8");		//디코딩
 					System.out.println("[TCPServer] received:" +data);
 					
 					//6.데이터 쓰기
-					os.write(data.getBytes("UTF-8"));
+					os.write(data.getBytes("UTF-8"));								//인코딩
 				}
 
 			}catch(SocketException e) {
