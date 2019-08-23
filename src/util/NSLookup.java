@@ -6,11 +6,11 @@ import java.util.Scanner;
 
 public class NSLookup {
 	public static void main(String[] args) {
-
+		Scanner scanner =null;
 		try {
 			while(true) {
 				System.out.print(">");
-				Scanner scanner = new Scanner(System.in);
+				scanner = new Scanner(System.in);
 				String domainname = scanner.nextLine();
 				
 				if(domainname.equals("exit")) {	
@@ -25,10 +25,12 @@ public class NSLookup {
 			}
 		} catch (UnknownHostException e) {
 
-			
 			e.printStackTrace();
 		}
+	
+		scanner.close();
 	}
+	
 }
 
 

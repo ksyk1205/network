@@ -1,8 +1,10 @@
 package echo;
 
+import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.Scanner;
@@ -13,40 +15,46 @@ public class EchoClient {
 
 	public static void main(String[] args) {
 		Socket socket = null;
+		Scanner scanner = null;
 
 		try {
-
+			//1.scanner 생성(표준입력, 키보드 연결)
+			scanner = new Scanner(System.in);
+			
+			//2.소켓생성
 			socket =new Socket();
-
-			InetSocketAddress inetsocketAddress =new InetSocketAddress(SERVER_IP,PORT);
-
-			socket.connect(inetsocketAddress);
-
-			System.out.println("[TCPClient] connected");
-
-
-			InputStream is=socket.getInputStream();
-			OutputStream os =socket.getOutputStream();
+			
+			//3.서버연결
+//			InetSocketAddress inetsocketAddress =new InetSocketAddress(SERVER_IP,PORT);
+			socket.connect(new InetSocketAddress(SERVER_IP,PORT));
+			log("connected");
+			
+			//4.IOStream  생성
+			BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream(),"UTF-8"));
+			PrintWriter pw = new PrintWriter(new OutputStreamWriter(socket.getOutputStream(),"UTF-8"),true);
+			
+			
 			while(true) {
-				Scanner scanner = new Scanner(System.in);
+			//5.키보드 입력 받기 	
 				System.out.print(">>");
-				String data = scanner.nextLine();
+				String line = scanner.nextLine();
 				
-				if(data.equals("exit")) {
+				if("quit".equals(line)) {
+					break;
+				}
+				//6.데이터 쓰기(전송)
+				pw.println(line);
+				
+				//7.데이터 읽기(수신)
+				String data = br.readLine();
+				if(data==null) {
+					log("closed by client");
 					break;
 				}
 				
-				os.write(data.getBytes("UTF-8"));
-
-
-				byte [] buffer = new byte[256];
-				int readByteCount =is.read(buffer);
-				if(readByteCount == -1) {
-					System.out.println("[TCPServer] closed by client");
-					return;
-				}
-				data = new String(buffer,0, readByteCount,"UTF-8");
+				//8.콘솔출력
 				System.out.println("<<"+data);
+
 
 			}
 
@@ -54,6 +62,9 @@ public class EchoClient {
 			e.printStackTrace();
 		}finally {
 			try {
+				if(scanner != null) {
+					scanner.close();
+				}
 				if(socket !=null && socket.isClosed() ==false) {
 					socket.close();
 				}
@@ -62,6 +73,9 @@ public class EchoClient {
 			}
 		}
 
+	}
+	private static void log(String log) {
+		System.out.println("[Echo Client]"+log);
 	}
 
 }
