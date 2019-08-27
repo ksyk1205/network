@@ -9,16 +9,15 @@ import java.io.Writer;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.List;
 
-import echo.EchoServer;
 
 public class ChatServerThread extends Thread {
 	private String nickname;
 	private Socket socket;
-	private List<PrintWriter> listWriters;
-	public ChatServerThread(Socket socket,List<PrintWriter> listWriters) {
+	private List<Writer> listWriters;
+	//생성
+	public ChatServerThread(Socket socket,List<Writer> listWriters) {
 		this.socket =socket;
 		this.listWriters = listWriters;
 	}
@@ -27,7 +26,7 @@ public class ChatServerThread extends Thread {
 	public void run() {
 		//Remote Host Information
 		InetSocketAddress inetRemoteSocketAddress = (InetSocketAddress)socket.getRemoteSocketAddress();
-		EchoServer.log("connected from client[" + 
+		log("connected from client[" + 
 				inetRemoteSocketAddress.getAddress().getHostAddress() + 
 				":" + inetRemoteSocketAddress.getPort() + "]");
 
@@ -39,6 +38,7 @@ public class ChatServerThread extends Thread {
 			//요청 처리 
 			while(true) {
 				String request = br.readLine();
+				
 				if(request==null) {
 					log("클라이언트로 부터 연결 끊김");
 					doQuit(pw);
@@ -58,68 +58,63 @@ public class ChatServerThread extends Thread {
 				}
 			}
 
-
 		}catch(IOException e) {
 			e.printStackTrace();
 		}
-
-
-
-
-
 	}
 
-	private void dojoin(String nickname, PrintWriter writer) {
+	private void dojoin(String nickname, Writer writer) {
 		this.nickname =nickname;
-		
+
 		String data = nickname+"님이 참여하였습니다.";
 		broadcast(data);
 
 		//wirter pool에 저장
 		addWriter(writer);
-		
-//		ack
+
+		//ack
 		pw.println("join:ok");
 		pw.flush();
 
 
 
 	}
-	private void addWriter(PrintWriter writer) {
+	private void addWriter(Writer writer) {
 		synchronized(listWriters) {
 			listWriters.add(writer);	
 		}
 	}
 	private void broadcast(String data) {
-	synchronized(listWriters) {
-			for(PrintWriter writer :listWriters) {
+		synchronized(listWriters) {
+			for(Writer writer :listWriters) {
 				PrintWriter printWriter =(PrintWriter)writer;
 				printWriter.println(data);
 				printWriter.flush();
 			}
 		}
-		
+
 
 	}
 	private void doMessage(String message) {
-		String s ="message:"+message+"\n";
+		String s ="message:"+message;
 		broadcast(s);
 	}
-	private void doQuit(PrintWriter writer ) {
+	private void doQuit(Writer writer ) {
+		((PrintWriter) writer).println("Bye");
+		((PrintWriter) writer).flush();
+		removeWriter(writer);
 		String data =nickname+"님이 퇴장하였습니다.";
 		broadcast(data);
-		removeWriter(writer);
-		
 		
 	}
-	private void removeWriter(PrintWriter writer) {
+	private void removeWriter(Writer writer) {
 		synchronized(listWriters) {
 			listWriters.remove(writer);	
 		}
-		
+
 	}
 
 	public static void log(String log) {
-		System.out.println("[Echo Server#" + Thread.currentThread().getId() + "] " + log);
+		System.out.println("[Chat ServerThread#" + Thread.currentThread().getId() + "] " + log);
 	}
 }

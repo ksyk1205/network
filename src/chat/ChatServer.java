@@ -1,7 +1,8 @@
 package chat;
 
 import java.io.IOException;
-import java.io.PrintWriter;
+
+import java.io.Writer;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
@@ -12,14 +13,15 @@ import java.util.List;
 
 
 public class ChatServer {
-	public static final int PORT =8880;
-	public static List<PrintWriter> listWriters = new ArrayList<PrintWriter>();
+	public static final int PORT =8900;
+	public static List<Writer> listWriters = new ArrayList<Writer>();
 	public static void main(String [] args) {
 		ServerSocket serverSocket = null;
 		
 		try {
 			//서버소켓 생성
 			serverSocket = new ServerSocket();
+			
 			//binding
 			InetAddress inetAddress =InetAddress.getLocalHost(); //ip 주소 
 			InetSocketAddress inetSocketAddress =new InetSocketAddress(inetAddress,PORT);//ip 소켓 주소(ip 주소 + 포트 번호)
@@ -29,11 +31,9 @@ public class ChatServer {
 			//요청 대기
 			while(true) {
 				Socket socket = serverSocket.accept();//blocking
+				//ChatServerThread 시작
 				new ChatServerThread(socket,listWriters).start();
-			}
-			
-	
-			
+			}	
 		} catch (IOException e) {
 			e.printStackTrace();
 		}finally {
@@ -49,7 +49,7 @@ public class ChatServer {
 	}
 
 	public static void log(String log) {
-		System.out.println("[Echo Server#" + Thread.currentThread().getId() + "] " + log);
+		System.out.println("[Chat Server#" + Thread.currentThread().getId() + "] " + log);
 	}
 
 }
