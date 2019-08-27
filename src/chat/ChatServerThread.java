@@ -96,7 +96,7 @@ public class ChatServerThread extends Thread {
 
 	}
 	private void doMessage(String message) {
-		String s ="message:"+message;
+		String s =nickname+message;
 		broadcast(s);
 	}
 	private void doQuit(Writer writer ) {
