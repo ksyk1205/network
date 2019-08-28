@@ -12,21 +12,21 @@ import java.util.List;
 
 public class ChatServer {
 	public static final int PORT =8900;
-	public static String SERVER_IP ="127.0.0.1";
+	public static final String SERVER_IP ="127.0.0.1";
 	public static List<Writer> listWriters = new ArrayList<Writer>();
 	public static void main(String [] args) {
 		ServerSocket serverSocket = null;
-		
+
 		try {
 			//서버소켓 생성
 			serverSocket = new ServerSocket();
-			
+
 			//binding
 			//String inetAddress =InetAddress.getLocalHost().getHostAddress(); //ip 주소 
 			InetSocketAddress inetSocketAddress =new InetSocketAddress(SERVER_IP,PORT);//ip 소켓 주소(ip 주소 + 포트 번호)
 			serverSocket.bind(inetSocketAddress);// 포트 바인딩
 			log("binding"+SERVER_IP+":"+PORT);
-			
+
 			//요청 대기
 			while(true) {
 				Socket socket = serverSocket.accept();//blocking

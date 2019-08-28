@@ -8,6 +8,7 @@ import java.io.PrintWriter;
 import java.io.Writer;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.net.SocketException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
@@ -44,7 +45,7 @@ public class ChatServerThread extends Thread {
 					doQuit(pw);
 					break;
 				}
-				
+
 				//프로토콜 분석
 				String[] tokens = request.split(":");
 				if("join".equals(tokens[0])) {
@@ -59,9 +60,13 @@ public class ChatServerThread extends Thread {
 				}
 			}
 
+		}catch(SocketException e) {
+			System.out.println(e);
 		}catch(IOException e) {
 			e.printStackTrace();
 		}
+
+
 	}
 
 	private void dojoin(String nickname, Writer writer) {
@@ -95,7 +100,7 @@ public class ChatServerThread extends Thread {
 		}
 	}
 	private void doMessage(String message) {
-		String s =nickname+message;
+		String s =nickname+" : "+message;
 		broadcast(s);
 	}
 	private void doQuit(Writer writer ) {

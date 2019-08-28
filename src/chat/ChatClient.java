@@ -10,9 +10,8 @@ import java.net.Socket;
 import java.util.Scanner;
 
 public class ChatClient {
-	private static String SERVER_IP ="127.0.0.1";
 	public static void main(String []args) {
-//		Scanner scanner =null;
+		//		Scanner scanner =null;
 		Socket socket =null;
 		String nickname =null;
 		try {
@@ -21,11 +20,10 @@ public class ChatClient {
 
 			//socket 생성
 			socket = new Socket();
-			
 
 			//연결
-//			socket.connect(new InetSocketAddress(InetAddress.getLocalHost().getHostAddress(), ChatServer.PORT));
-			socket.connect(new InetSocketAddress(SERVER_IP,ChatServer.PORT));
+			//socket.connect(new InetSocketAddress(InetAddress.getLocalHost().getHostAddress(), ChatServer.PORT));
+			socket.connect(new InetSocketAddress(ChatServer.SERVER_IP,ChatServer.PORT));
 			log("connected");
 
 			//reader/writer 생성
@@ -34,13 +32,12 @@ public class ChatClient {
 
 			//join프로토콜
 			while(true) {
-			System.out.print("닉네임>>");
-			nickname =scanner.nextLine();
-			if(!nickname.equals("")) {
-				break;
+				System.out.print("닉네임>>");
+				nickname =scanner.nextLine();
+				if(!nickname.equals("")) {
+					break;
+				}
 			}
-			}
-
 			pw.println("join:"+nickname);
 			pw.flush();
 
