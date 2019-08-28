@@ -38,12 +38,13 @@ public class ChatServerThread extends Thread {
 			//요청 처리 
 			while(true) {
 				String request = br.readLine();
-				
+
 				if(request==null) {
 					log("클라이언트로 부터 연결 끊김");
 					doQuit(pw);
 					break;
 				}
+				
 				//프로토콜 분석
 				String[] tokens = request.split(":");
 				if("join".equals(tokens[0])) {
@@ -54,7 +55,7 @@ public class ChatServerThread extends Thread {
 					doQuit(pw);
 					break;
 				}else {
-					ChatServer.log("error:알 수 없는 요청("+tokens[0]+")");
+					log("error:알 수 없는 요청("+tokens[0]+")");
 				}
 			}
 
@@ -92,8 +93,6 @@ public class ChatServerThread extends Thread {
 				printWriter.flush();
 			}
 		}
-
-
 	}
 	private void doMessage(String message) {
 		String s =nickname+message;
@@ -105,7 +104,7 @@ public class ChatServerThread extends Thread {
 		removeWriter(writer);
 		String data =nickname+"님이 퇴장하였습니다.";
 		broadcast(data);
-		
+
 	}
 	private void removeWriter(Writer writer) {
 		synchronized(listWriters) {
