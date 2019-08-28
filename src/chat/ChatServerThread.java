@@ -17,7 +17,7 @@ public class ChatServerThread extends Thread {
 	private String nickname;
 	private Socket socket;
 	private List<Writer> listWriters;
-	//생성
+	//생성자
 	public ChatServerThread(Socket socket,List<Writer> listWriters) {
 		this.socket =socket;
 		this.listWriters = listWriters;
@@ -64,6 +64,14 @@ public class ChatServerThread extends Thread {
 			System.out.println(e);
 		}catch(IOException e) {
 			e.printStackTrace();
+		}finally {
+			try {
+				if(socket != null && socket.isClosed() == false) {
+					socket.close();
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 
 
@@ -82,8 +90,6 @@ public class ChatServerThread extends Thread {
 		pw.println("join:ok");
 		pw.flush();
 
-
-
 	}
 	private void addWriter(Writer writer) {
 		synchronized(listWriters) {
@@ -96,6 +102,7 @@ public class ChatServerThread extends Thread {
 				PrintWriter printWriter =(PrintWriter)writer;
 				printWriter.println(data);
 				printWriter.flush();
+
 			}
 		}
 	}
@@ -104,8 +111,6 @@ public class ChatServerThread extends Thread {
 		broadcast(s);
 	}
 	private void doQuit(Writer writer ) {
-		((PrintWriter) writer).println("Bye");
-		((PrintWriter) writer).flush();
 		removeWriter(writer);
 		String data =nickname+"님이 퇴장하였습니다.";
 		broadcast(data);

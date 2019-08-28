@@ -13,7 +13,7 @@ import java.util.List;
 public class ChatServer {
 	public static final int PORT =8900;
 	public static final String SERVER_IP ="127.0.0.1";
-	public static List<Writer> listWriters = new ArrayList<Writer>();
+	private static List<Writer> listWriters = new ArrayList<Writer>();
 	public static void main(String [] args) {
 		ServerSocket serverSocket = null;
 

@@ -16,7 +16,7 @@ public class ChatClientThread extends Thread{
 		try {
 			while(true){	
 				String data =bufferedReader.readLine();
-				if("Bye".equals(data)) {
+				if(data==null) {
 					break;
 				}
 				System.out.println(data);

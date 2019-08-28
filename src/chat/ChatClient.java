@@ -50,7 +50,7 @@ public class ChatClient {
 				String input = scanner.nextLine();
 
 				if("quit".equals(input)) {
-					pw.println("quit:");
+					pw.println("quit");
 					break;
 				}
 				if(input.equals("")) {
